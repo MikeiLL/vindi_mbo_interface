@@ -209,7 +209,7 @@ class MZ_Vindi_MBO {
 	
 		//Functions
 
-		require_once MZ-VINDI-MBO_DIR .'lib/functions.php';
+		require_once MZ_VINDI_MBO_DIR .'lib/functions.php';
         	
         $this->loader = new MZ_Vindi_MBO_Loader();
     }
@@ -241,9 +241,9 @@ class MZ_Vindi_MBO {
  
  	private function add_shortcodes() {
  	
- 		$mz_staff = new MZ_MBO_Staff();
+ 		$mz_vindi_sandbox = new MZ_Vindi_Sandbox();
  		
-        add_shortcode('mz-vindi-test', array($schedule_display, 'mZ_vindi_test'));
+        add_shortcode('mz-vindi-sandbox', array($mz_vindi_sandbox, 'mZ_vindi_mbo_sandbox'));
 
     }
  
