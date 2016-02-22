@@ -14,6 +14,13 @@ class MZ_Vindi_Sandbox {
 	
 	  $json_data = file_get_contents('/Users/mikekilmer/Documents/Clients/Tracer Parkour/testJSON_mine.txt');
 	  $sale_details = json_decode($json_data, true);
+	  $transaction_bill = $sale_details['event']['data']['bill'];
+	  //mz_pr($transaction_bill);
+	  $mbo_client_id = $transaction_bill['customer']['id'];
+	  //$charge_amount = $transaction_bill['charges'][0]['amount'];
+	  $charge_amount = $transaction_bill['amount'];
+	  $vindi_transaction_id = $transaction_bill['id'];
+	  $vindi_transaction_datetime = $transaction_bill['created_at'];
 	  echo "<hr/>";
 
 	  	$mb = MZ_Mindbody_Init::instantiate_mbo_API();
@@ -59,9 +66,9 @@ class MZ_Vindi_Sandbox {
     )
 ));
 */
-		$checkoutShoppingCartRequest = $mb->CheckoutShoppingCart(array(
+/*		$checkoutShoppingCartRequest = $mb->CheckoutShoppingCart(array(
     'Test'=>'true',
-    'ClientID'=>'1234', //Rivka at URU 100000602,
+    'ClientID'=>$mbo_client_id, //Rivka at URU 100000602, //1234
     'CartItems'=>array(
         'CartItem'=>array(
             'Quantity'=>1,
@@ -77,7 +84,7 @@ class MZ_Vindi_Sandbox {
     'Payments' => array(
         'PaymentInfo' => new SoapVar(
             array(
-							'Amount' => 130
+							'Amount' => $charge_amount
               ), 
             SOAP_ENC_ARRAY, 
             'CashInfo', 
@@ -85,20 +92,9 @@ class MZ_Vindi_Sandbox {
         )
     )
 ));
-
-	  	
+*/
+	  $checkoutShoppingCartRequest = $mb->GetServices(array('SellOnline'=>'false','LocationID'=>1,'HideRelatedPrograms'=>'true'));
 		mz_pr($checkoutShoppingCartRequest);
-		/*$test = $mb->AddOrUpdateClients(array(
-			'Test'=>'False',
-			'UpdateAction'=>'Account Balance',
-			'Clients'=>array(
-				'ID'=>'1234',
-				'AccountBalance'=>'90'
-				)
-		));
-		
-		mz_pr($test);
-		*/
 		$mb->debug();
 	  $return = <<<EFD
 		   <!-- Page Content -->
@@ -110,6 +106,7 @@ EFD;
 		$return .= "<p>That's all she wrote.</p></div></div>";
 	  return $return;
 	}
+
 
 	protected function remove_empties ($matches) {
 	  ### Variableize the stuff between the tags.
@@ -129,4 +126,16 @@ EFD;
 		return $a['ID'] - $b['ID'];
 	}
 }//EOF MZ_MBO_Staff
+
+if (!function_exists('write_log')) {
+    function write_log ( $log )  {
+        if ( true === WP_DEBUG ) {
+            if ( is_array( $log ) || is_object( $log ) ) {
+                error_log( print_r( $log, true ) );
+            } else {
+                error_log( $log );
+            }
+        }
+    }
+}
 ?>
